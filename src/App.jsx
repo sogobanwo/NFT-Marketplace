@@ -80,7 +80,7 @@ function App() {
                                             <Link href={`${import.meta.env.VITE_opensea_url}/${index}`}>View on Opensea</Link>
                                             <Dialog.Root>
                                                 <Dialog.Trigger>
-                                                    <Button>Transfer</Button>
+                                                    <Button className="bg-blue co">Transfer</Button>
                                                 </Dialog.Trigger>
 
                                                 <Dialog.Content style={{ maxWidth: 450 }}>
@@ -150,7 +150,7 @@ function App() {
                                                             <Link href={`${import.meta.env.VITE_opensea_url}/${index}`}>View on Opensea</Link>
                                                             <Dialog.Root>
                                                                 <Dialog.Trigger>
-                                                                    <Button>Transfer</Button>
+                                                                    <Button className="bg-blue co">Transfer</Button>
                                                                 </Dialog.Trigger>
 
                                                                 <Dialog.Content style={{ maxWidth: 450 }}>

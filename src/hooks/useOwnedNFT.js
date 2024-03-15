@@ -52,7 +52,7 @@ const useOwnedNFT = () => {
 
 			decodedResponses.forEach((addr, index) => {
 				ownedTokenIds.push(validResponsesIndex[index]);
-				addressArray.push(addr)
+				{addr === undefined ? addressArray.push(ethers.ZeroAddress):addressArray.push(addr)}
 
 			});
 
