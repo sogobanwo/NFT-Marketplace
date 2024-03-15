@@ -22,7 +22,7 @@ function App() {
 
     const tokensData = useCollections();
     const myTokenIds = useMyNfts();
-    const ownedNFT = useOwnedNFT();
+    const [ownedNFT, addresses] = useOwnedNFT();
 
     const handleMint = (address, tokenId) => {
         if (!isAddress(address)) {
@@ -47,7 +47,8 @@ function App() {
     const allCollections = tokensData.map((collection, index) => ({
         ...collection,
         isOwned: ownedNFT.includes(index),
-        ownedByMe: myTokenIds.includes(index)
+        ownedByMe: myTokenIds.includes(index),
+        NFTOwner: addresses[index]
     }));
     console.log(allCollections)
 
@@ -188,7 +189,8 @@ function App() {
                                                                 </Dialog.Content>
                                                             </Dialog.Root></>
                                                     case x.isOwned && !x.ownedByMe:
-                                                        return <Link href={`${import.meta.env.VITE_opensea_url}/${index}`}>View on Opensea</Link>;
+                                                        return <><Link href={`${import.meta.env.VITE_opensea_url}/${index}`}>View on Opensea</Link>
+                                                        <Text>Owner: {x.NFTOwner.toString().slice(0,5) + "..." + x.NFTOwner.toString().slice(-5)}</Text></>;
                                                     default:
                                                         return <>
                                                             <Dialog.Root>
