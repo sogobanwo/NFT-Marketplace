@@ -9,12 +9,16 @@ import useOwnedNFT from "./hooks/useOwnedNFT";
 import useMint from "./hooks/useMint";
 import { isAddress } from "ethers";
 import { useState } from "react";
+import useTransfer from "./hooks/useTransfer";
 
 configureWeb3Modal();
 
 function App() {
     const [address, setAddress] = useState("");
-    const mint = useMint()
+    const [addressTo, setAddressTo] = useState("");
+
+    const mint = useMint();
+    const transfer = useTransfer();
 
     const tokensData = useCollections();
     const myTokenIds = useMyNfts();
@@ -26,6 +30,14 @@ function App() {
             return;
         }
         mint(address, tokenId);
+    }
+
+    const handleTransfer = (addressTo, tokenId) => {
+        if (!isAddress(addressTo)) {
+            console.log("Not a valid address");
+            return;
+        }
+        transfer(addressTo, tokenId);
     }
 
     const myTokensData = tokensData.filter((x, index) =>
@@ -73,7 +85,7 @@ function App() {
                                                 <Dialog.Content style={{ maxWidth: 450 }}>
                                                     <Dialog.Title>Transfer </Dialog.Title>
                                                     <Dialog.Description size="2" mb="4">
-                                                        Input address and tokenID
+                                                        Input address
                                                     </Dialog.Description>
 
                                                     <Flex direction="column" gap="3">
@@ -82,9 +94,9 @@ function App() {
                                                                 Address
                                                             </Text>
                                                             <TextField.Input
-                                                                value={address}
+                                                                value={addressTo}
                                                                 onChange={(e) =>
-                                                                    setAddress(e.target.value)
+                                                                    setAddressTo(e.target.value)
                                                                 }
                                                                 placeholder="Enter valid address"
                                                             />
@@ -100,8 +112,8 @@ function App() {
                                                         </Dialog.Close>
                                                         <Dialog.Close>
                                                             <Button onClick={() => {
-                                                                handleMint(address, index)
-                                                            }}>Mint</Button>
+                                                                handleTransfer(addressTo, index)
+                                                            }}>Transfer</Button>
                                                         </Dialog.Close>
                                                     </Flex>
                                                 </Dialog.Content>
@@ -143,7 +155,7 @@ function App() {
                                                                 <Dialog.Content style={{ maxWidth: 450 }}>
                                                                     <Dialog.Title>Transfer </Dialog.Title>
                                                                     <Dialog.Description size="2" mb="4">
-                                                                        Input address and tokenID
+                                                                        Input to be transfered to
                                                                     </Dialog.Description>
 
                                                                     <Flex direction="column" gap="3">
@@ -152,9 +164,9 @@ function App() {
                                                                                 Address
                                                                             </Text>
                                                                             <TextField.Input
-                                                                                value={address}
+                                                                                value={addressTo}
                                                                                 onChange={(e) =>
-                                                                                    setAddress(e.target.value)
+                                                                                    setAddressTo(e.target.value)
                                                                                 }
                                                                                 placeholder="Enter valid address"
                                                                             />
@@ -169,8 +181,8 @@ function App() {
                                                                         </Dialog.Close>
                                                                         <Dialog.Close>
                                                                             <Button onClick={() => {
-                                                                                handleMint(address, index)
-                                                                            }}>MInt</Button>
+                                                                                handleTransfer(address, index)
+                                                                            }}>Transfer</Button>
                                                                         </Dialog.Close>
                                                                     </Flex>
                                                                 </Dialog.Content>
@@ -214,7 +226,7 @@ function App() {
                                                                         <Dialog.Close>
                                                                             <Button onClick={() => {
                                                                                 handleMint(address, index)
-                                                                            }}>MInt</Button>
+                                                                            }}>Mint</Button>
                                                                         </Dialog.Close>
                                                                     </Flex>
                                                                 </Dialog.Content>
