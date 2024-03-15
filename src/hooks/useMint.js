@@ -6,6 +6,7 @@ import {
     useWeb3ModalProvider,
 } from "@web3modal/ethers/react";
 import { getNFTContract } from "../constants/contracts";
+import toast from "react-hot-toast";
 
 const useMint = () => {
     const { chainId } = useWeb3ModalAccount();
@@ -19,6 +20,8 @@ const useMint = () => {
             const signer = await readWriteProvider.getSigner();
 
             const contract = getNFTContract(signer);
+            const loadingToast= toast.loading('Minting NFT...');
+
 
             try {
                 const transaction = await contract.safeMint(address, tokenId, {value:"100000000000000"});
@@ -28,14 +31,17 @@ const useMint = () => {
                 console.log("receipt: ", receipt);
 
                 if (receipt.status) {
-                    return console.log("Mint successfull");
+                    toast.remove(loadingToast)
+                    return toast.success("Mint successful")
                 }
 
                 console.log("Failed to mint");
             } catch (error) {
+                toast.remove(loadingToast)
+
                 console.log(error);
 
-                console.error("error: ", error);
+                toast.error(error.reason)
             }
         },
         [chainId, walletProvider]

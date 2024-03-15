@@ -10,6 +10,8 @@ import useMint from "./hooks/useMint";
 import { isAddress } from "ethers";
 import { useState } from "react";
 import useTransfer from "./hooks/useTransfer";
+import { Toaster } from "react-hot-toast";
+
 
 configureWeb3Modal();
 
@@ -54,6 +56,7 @@ function App() {
 
 
     return (
+        <>
         <Container>
             <Header />
             <main className="mt-6">
@@ -191,7 +194,7 @@ function App() {
                                                             </Dialog.Root></Flex>
                                                     case x.isOwned && !x.ownedByMe:
                                                         return <Flex direction={"column"}><Link href={`${import.meta.env.VITE_opensea_url}/${index}`} className="my-2 underline">View on Opensea</Link>
-                                                            <Text>Owner: {x.NFTOwner.toString().slice(0, 5) + "..." + x.NFTOwner.toString().slice(-5)}</Text></Flex>;
+                                                            <Text>Owner: {x.NFTOwner?.toString().slice(0, 5) + "..." + x.NFTOwner?.toString().slice(-5)}</Text></Flex>;
                                                     default:
                                                         return <>
                                                             <Dialog.Root>
@@ -247,6 +250,8 @@ function App() {
                 />
             </main>
         </Container>
+        <Toaster />
+        </>
     );
 }
 
