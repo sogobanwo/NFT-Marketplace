@@ -7,12 +7,12 @@ import {
 } from "@web3modal/ethers/react";
 import { getNFTContract } from "../constants/contracts";
 
-const useMint = (address, tokenId) => {
+const useMint = () => {
     const { chainId } = useWeb3ModalAccount();
     const { walletProvider } = useWeb3ModalProvider();
 
     return useCallback(
-        async () => {
+        async (address, tokenId) => {
             if (!isSupportedChain(chainId))
                 return console.error("Wrong network");
             const readWriteProvider = getProvider(walletProvider);
@@ -21,7 +21,7 @@ const useMint = (address, tokenId) => {
             const contract = getNFTContract(signer);
 
             try {
-                const transaction = await contract.safeMint(address, tokenId);
+                const transaction = await contract.safeMint(address, tokenId, {value:"100000000000000"});
                 console.log("transaction: ", transaction);
                 const receipt = await transaction.wait();
 

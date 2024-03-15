@@ -1,4 +1,4 @@
-import { Box, Button, Container, Flex, Link, Text } from "@radix-ui/themes";
+import { Box, Button, Container, Dialog, Flex, Link, Text, TextField } from "@radix-ui/themes";
 import { configureWeb3Modal } from "./connection";
 import "@radix-ui/themes/styles.css";
 import Header from "./component/Header";
@@ -8,18 +8,25 @@ import useMyNfts from "./hooks/useMyNfts";
 import useOwnedNFT from "./hooks/useOwnedNFT";
 import useMint from "./hooks/useMint";
 import { isAddress } from "ethers";
+import { useState } from "react";
 
 configureWeb3Modal();
 
 function App() {
+    const [address, setAddress] = useState("");
+    const mint = useMint()
+
     const tokensData = useCollections();
     const myTokenIds = useMyNfts();
     const ownedNFT = useOwnedNFT();
 
-    const handleMint =(address, tokenId)=>{
-        isAddress()
+    const handleMint = (address, tokenId) => {
+        if (!isAddress(address)) {
+            console.log("Not a valid address");
+            return;
+        }
+        mint(address, tokenId);
     }
-    const mintNFT = useMint(address, tokenId);
 
     const myTokensData = tokensData.filter((x, index) =>
         myTokenIds.includes(index)
@@ -43,7 +50,7 @@ function App() {
                             {myTokensData.length === 0 ? (
                                 <Text>No NFT owned yet</Text>
                             ) : (
-                                myTokensData.map((x) => (
+                                myTokensData.map((x, index) => (
                                     <Box key={x.dna} className="w-[20rem]">
                                         <img
                                             src={x.image}
@@ -56,9 +63,49 @@ function App() {
                                         <Text className="block">
                                             Description: {x.description}
                                         </Text>
-                                        <Button className="px-8 py-2 text-xl mt-2">
-                                            Mint
-                                        </Button>
+                                        <>
+                                            <Link href={`${import.meta.env.VITE_opensea_url}/${index}`}>View on Opensea</Link>
+                                            <Dialog.Root>
+                                                <Dialog.Trigger>
+                                                    <Button>Transfer</Button>
+                                                </Dialog.Trigger>
+
+                                                <Dialog.Content style={{ maxWidth: 450 }}>
+                                                    <Dialog.Title>Transfer </Dialog.Title>
+                                                    <Dialog.Description size="2" mb="4">
+                                                        Input address and tokenID
+                                                    </Dialog.Description>
+
+                                                    <Flex direction="column" gap="3">
+                                                        <label>
+                                                            <Text as="div" size="2" mb="1" weight="bold">
+                                                                Address
+                                                            </Text>
+                                                            <TextField.Input
+                                                                value={address}
+                                                                onChange={(e) =>
+                                                                    setAddress(e.target.value)
+                                                                }
+                                                                placeholder="Enter valid address"
+                                                            />
+                                                        </label>
+                                                     
+                                                    </Flex>
+
+                                                    <Flex gap="3" mt="4" justify="end">
+                                                        <Dialog.Close>
+                                                            <Button variant="soft" color="gray">
+                                                                Cancel
+                                                            </Button>
+                                                        </Dialog.Close>
+                                                        <Dialog.Close>
+                                                            <Button onClick={() => {
+                                                                handleMint(address, index)
+                                                            }}>Mint</Button>
+                                                        </Dialog.Close>
+                                                    </Flex>
+                                                </Dialog.Content>
+                                            </Dialog.Root></>
                                     </Box>
                                 ))
                             )}
@@ -88,11 +135,91 @@ function App() {
                                                     case x.isOwned && x.ownedByMe:
                                                         return <>
                                                             <Link href={`${import.meta.env.VITE_opensea_url}/${index}`}>View on Opensea</Link>
-                                                            <Button className="px-8 py-2 text-xl mt-2">Transfer</Button></>
+                                                            <Dialog.Root>
+                                                                <Dialog.Trigger>
+                                                                    <Button>Transfer</Button>
+                                                                </Dialog.Trigger>
+
+                                                                <Dialog.Content style={{ maxWidth: 450 }}>
+                                                                    <Dialog.Title>Transfer </Dialog.Title>
+                                                                    <Dialog.Description size="2" mb="4">
+                                                                        Input address and tokenID
+                                                                    </Dialog.Description>
+
+                                                                    <Flex direction="column" gap="3">
+                                                                        <label>
+                                                                            <Text as="div" size="2" mb="1" weight="bold">
+                                                                                Address
+                                                                            </Text>
+                                                                            <TextField.Input
+                                                                                value={address}
+                                                                                onChange={(e) =>
+                                                                                    setAddress(e.target.value)
+                                                                                }
+                                                                                placeholder="Enter valid address"
+                                                                            />
+                                                                        </label>
+                                                                    </Flex>
+
+                                                                    <Flex gap="3" mt="4" justify="end">
+                                                                        <Dialog.Close>
+                                                                            <Button variant="soft" color="gray">
+                                                                                Cancel
+                                                                            </Button>
+                                                                        </Dialog.Close>
+                                                                        <Dialog.Close>
+                                                                            <Button onClick={() => {
+                                                                                handleMint(address, index)
+                                                                            }}>MInt</Button>
+                                                                        </Dialog.Close>
+                                                                    </Flex>
+                                                                </Dialog.Content>
+                                                            </Dialog.Root></>
                                                     case x.isOwned && !x.ownedByMe:
                                                         return <Link href={`${import.meta.env.VITE_opensea_url}/${index}`}>View on Opensea</Link>;
                                                     default:
-                                                        return <Button className="px-8 py-2 text-xl mt-2">Mint</Button>;
+                                                        return <>
+                                                            <Dialog.Root>
+                                                                <Dialog.Trigger>
+                                                                    <Button color="blue">Mint</Button>
+                                                                </Dialog.Trigger>
+
+                                                                <Dialog.Content style={{ maxWidth: 450 }}>
+                                                                    <Dialog.Title>Transfer </Dialog.Title>
+                                                                    <Dialog.Description size="2" mb="4">
+                                                                        Mint to an address
+                                                                    </Dialog.Description>
+
+                                                                    <Flex direction="column" gap="3">
+                                                                        <label>
+                                                                            <Text as="div" size="2" mb="1" weight="bold">
+                                                                                Address
+                                                                            </Text>
+                                                                            <TextField.Input
+                                                                                value={address}
+                                                                                onChange={(e) =>
+                                                                                    setAddress(e.target.value)
+                                                                                }
+                                                                                placeholder="Enter valid address"
+                                                                            />
+                                                                        </label>
+                                                                    </Flex>
+
+                                                                    <Flex gap="3" mt="4" justify="end">
+                                                                        <Dialog.Close>
+                                                                            <Button variant="soft" color="gray">
+                                                                                Cancel
+                                                                            </Button>
+                                                                        </Dialog.Close>
+                                                                        <Dialog.Close>
+                                                                            <Button onClick={() => {
+                                                                                handleMint(address, index)
+                                                                            }}>MInt</Button>
+                                                                        </Dialog.Close>
+                                                                    </Flex>
+                                                                </Dialog.Content>
+                                                            </Dialog.Root>
+                                                        </>
                                                 }
                                             })()
                                         }
